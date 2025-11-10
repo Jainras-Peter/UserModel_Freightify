@@ -15,7 +15,7 @@ export class UsersList implements OnInit {
   selectedStatus :any ;
   selectedType :string =""
   showModal = false;
-  deleteModal: any;
+
   //search role
   selectedRoles :string[]=[];
   searchRole ='';
@@ -27,7 +27,8 @@ export class UsersList implements OnInit {
   //success msg
   successMessage = '';
   showSuccessAlert = false;
- 
+  //Delete modal
+  showDeleteModal = false;
   
   constructor(private userService: UserService, private cdr: ChangeDetectorRef) {}
 
@@ -200,7 +201,7 @@ filterRoles(): User[] {
     this.showModal = true;
   }
 
-  //Msg helpers
+  //success-Msg helpers
   showAlert(message: string) {
   this.successMessage = message;
   this.showSuccessAlert = true;
@@ -231,22 +232,26 @@ filterRoles(): User[] {
     this.cdr.detectChanges();
   }
 
-  //delete
+  //delete-confirm modal
   openDeleteModal(user: User) {
-    this.selectedUser = user;
-    const modalEl = document.getElementById('deleteConfirmModal');
-    this.deleteModal = new bootstrap.Modal(modalEl);
-    this.deleteModal.show();
-  }
-  confirmDelete() {
-    if (!this.selectedUser || !this.selectedUser.id) return;
-    this.userService.deleteUser(this.selectedUser.id).subscribe(() => {
-      this.selectedUser = null;
-      
-      this.load();
-      this.cdr.detectChanges();
-    });
-  }
+  this.selectedUser = user;
+  this.showDeleteModal = true; 
+ }
 
+cancelDelete() {
+  this.showDeleteModal = false;
+  this.selectedUser = null;
+}
+
+confirmDelete() {
+  if (!this.selectedUser || !this.selectedUser.id) return;
+  this.userService.deleteUser(this.selectedUser.id).subscribe(() => {
+    this.showDeleteModal = false;
+    this.selectedUser = null;
+    this.showAlert('User deleted successfully!');
+    this.load();
+    this.cdr.detectChanges();
+  });
+}
   
 }
