@@ -1,0 +1,219 @@
+
+
+
+<div class="modal-backdrop fade show"></div>
+<div class="modal d-block" tabindex="-1">
+  <div class="modal-dialog modal-lg modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">
+          {{ mode === 'create' ? 'Create User' : mode === 'edit' ? 'Edit User' : 'View User' }}
+        </h5>
+        <button type="button" class="btn-close" aria-label="Close" (click)="cancel()"></button>
+      </div>
+
+      <div class="modal-body">
+        <form [formGroup]="form" (ngSubmit)="submit()">
+          <div class="row g-3">
+            <!-- User Type -->
+            <div class="col-md-6">
+              <label class="form-label">User Type</label>
+              <select formControlName="type" class="form-select"
+                [ngClass]="{ 'is-invalid': submitted && f['type'].invalid }">
+                <option value="" disabled>Select Type</option>
+                <option value="INTERNAL">INTERNAL</option>
+                <option value="CUSTOMER">CUSTOMER</option>
+              </select>
+              <div *ngIf="submitted && f['type'].invalid" class="invalid-feedback">
+                Please select a user type.
+              </div>
+            </div>
+
+            <!-- User Role -->
+            <div class="col-md-6">
+              <label class="form-label">User Role</label>
+              <select formControlName="role" class="form-select"
+                [ngClass]="{ 'is-invalid': submitted && f['role'].invalid }">
+                <option value="" disabled>Select Role</option>
+                <option value="ADMIN">ADMIN</option>
+                <option value="ForwarderUser">ForwarderUser</option>
+                <option value="Operations">Operations</option>
+              </select>
+              <div *ngIf="submitted && f['role'].invalid" class="invalid-feedback">
+                Please select a role.
+              </div>
+            </div>
+
+            <!-- First Name -->
+            <div class="col-md-6">
+              <label class="form-label">First Name</label>
+              <input formControlName="firstName" class="form-control" placeholder="First name"
+                [ngClass]="{ 'is-invalid': submitted && f['firstName'].invalid }">
+              <div *ngIf="submitted && f['firstName'].invalid" class="invalid-feedback">
+                First name is required.
+              </div>
+            </div>
+
+            <!-- Last Name -->
+            <div class="col-md-6">
+              <label class="form-label">Last Name</label>
+              <input formControlName="lastName" class="form-control" placeholder="Last name"
+                [ngClass]="{ 'is-invalid': submitted && f['lastName'].invalid }">
+              <div *ngIf="submitted && f['lastName'].invalid" class="invalid-feedback">
+                Last name is required.
+              </div>
+            </div>
+
+            <!-- Phone -->
+            <div class="col-md-6">
+              <label class="form-label">Phone Number</label>
+              <input formControlName="phone" class="form-control" placeholder="Phone"
+                [ngClass]="{ 'is-invalid': submitted && f['phone'].invalid }">
+              <div *ngIf="submitted && f['phone'].invalid" class="invalid-feedback">
+                Phone number is required.
+              </div>
+            </div>
+
+            <!-- Email -->
+            <div class="col-md-6">
+              <label class="form-label">Email ID</label>
+              <input formControlName="email" class="form-control" placeholder="Email"
+                [ngClass]="{ 'is-invalid': submitted && f['email'].invalid }">
+              <div *ngIf="submitted && f['email'].errors?.['required']" class="invalid-feedback">
+                Email is required.
+              </div>
+              <div *ngIf="submitted && f['email'].errors?.['email']" class="invalid-feedback">
+                Please enter a valid email address.
+              </div>
+            </div>
+
+           <!-- Password -->
+           
+              <div class="col-md-6 position-relative"  *ngIf="mode!='view'">
+                <label class="form-label">Password</label>
+                <div class="input-group">
+                  <input
+                    [type]="showPassword ? 'text' : 'password'"
+                    formControlName="password"
+                    class="form-control"
+                    [ngClass]="{ 'is-invalid': submitted && f['password'].invalid }"
+                    placeholder="Enter password"
+                      [(ngModel)]="password"
+                      (input)="validatePassword()"
+
+                  
+                  />
+                  <button
+                    type="button"
+                    class="btn btn-outline-secondary"
+                    (click)="PasswordVisibility()"
+                    type="button"
+                  >
+                    <i class="bi" [ngClass]="showPassword ? 'bi-eye-slash' : 'bi-eye'"></i>
+                  </button>
+                </div>
+                <div *ngIf="submitted && f['password'].invalid" class="invalid-feedback d-block">
+                  Password is required.
+                </div>
+
+                 <!-- Validation checklist -->
+
+                      <div class="mt-2 text-sm">
+                        <p>Password must contain the following:</p>
+                        <ul class="ml-4 mt-1">
+                          <li
+                            [class.text-green-600]="passwordValidations.hasMinLength"
+                            [class.text-red-500]="!passwordValidations.hasMinLength"
+                          >
+                            ✔ Minimum 8 characters
+                          </li>
+                          <li
+                            [class.text-green-600]="passwordValidations.hasNumber"
+                            [class.text-red-500]="!passwordValidations.hasNumber"
+                          >
+                            ✔ A number
+                          </li>
+                          <li
+                            [class.text-green-600]="passwordValidations.hasSpecialChar"
+                            [class.text-red-500]="!passwordValidations.hasSpecialChar"
+                          >
+                            ✔ A special character
+                          </li>
+                        </ul>
+                      </div>
+                </div>
+
+            <!-- Confirm Password -->
+            <div class="col-md-6 position-relative" *ngIf="mode!='view'">
+              <label class="form-label">Confirm Password</label>
+              <div class="input-group">
+                <input
+                  [type]="showConfirmPassword ? 'text' : 'password'"
+                  formControlName="confirmPassword"
+                  class="form-control"(input)="checkPasswordMatch()"
+                  [ngClass]="{ 'is-invalid': submitted && f['confirmPassword'].invalid }"
+                  placeholder="Confirm password"
+                   [(ngModel)]="confirmPassword"
+                   (input)="checkPasswordMatch()"
+                />
+                <button
+                  type="button"
+                  class="btn btn-outline-secondary"
+                  (click)="ConfirmPasswordVisibility()"
+                >
+                  <i class="bi" [ngClass]="showConfirmPassword ? 'bi-eye-slash' : 'bi-eye'"></i>
+                </button>
+              </div>
+               <p *ngIf="passwordMismatch" class="text-red-500 text-sm mt-1">
+                Password doesn't match
+              </p>
+              <div *ngIf="submitted && f['confirmPassword'].invalid" class="invalid-feedback d-block">
+                password is not matched.
+              </div>
+            </div>
+                        
+             
+          <!-- User Currency -->
+          <div class="col-md-6">
+            <label class="form-label">User Currency</label>
+            <select formControlName="userCurrency" class="form-select">
+              <option *ngFor="let cur of currencies" [value]="cur">{{ cur }}</option>
+            </select>
+          </div>
+
+          <!-- Measurement System -->
+          <div class="col-md-6">
+            <label class="form-label">Measurement System</label>
+            <select formControlName="measurementSystem" class="form-select">
+              <option *ngFor="let m of measurementSystems" [value]="m">{{ m }}</option>
+            </select>
+          </div>
+
+          <!-- User Status -->
+           <div class="col-md-12">
+                <label class="form-label d-block mb-2">User Status</label>
+                <div class="d-flex align-items-center gap-3">
+                  <span [class.text-primary]="!f['userStatus'].value">Deactive</span>
+                  <div class="form-check form-switch m-0">
+                    <input class="form-check-input" type="checkbox" formControlName="userStatus" >
+                  </div>
+                  <span [class.text-primary]="f['userStatus'].value">Active</span>
+                </div>
+            </div>
+          
+         </div>
+            
+          
+          <!-- submit Bottons -->
+          
+          <div class="mt-4 text-end">
+            <button type="button" class="btn btn-outline-secondary me-2" (click)="cancel()">Cancel</button>
+            <button type="submit" class="bg-lime-400 hover:bg-lime-500 text-black px-4 py-2 rounded-lg shadow-md transitio">
+              {{ mode === 'view' ? 'Close' : 'Submit' }}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
