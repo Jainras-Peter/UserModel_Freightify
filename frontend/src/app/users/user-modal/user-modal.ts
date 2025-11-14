@@ -12,7 +12,7 @@ import { UserService, User } from '../user';
 export class UserModal implements OnInit {
   @Input() mode: 'create' | 'edit' | 'view' = 'create';
   @Input() user: User | null = null;
-  @Output() close = new EventEmitter<{ refresh: boolean; user?: User }>();//see
+  @Output() close = new EventEmitter<{ refresh: boolean; user?: User }>();
 
   form!: FormGroup;
   submitted = false;
