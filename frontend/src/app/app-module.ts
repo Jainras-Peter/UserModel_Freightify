@@ -7,14 +7,13 @@ import { App } from './app';
 import { provideHttpClient,withFetch } from '@angular/common/http';
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { UsersModule } from './users/users-module';
-import { Dharshan } from './kp/dharshan/dharshan';
 
 
 
 @NgModule({
   declarations: [
     App,
-    Dharshan,
+   
    
   ],
   imports: [
