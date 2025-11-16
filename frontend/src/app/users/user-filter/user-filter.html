@@ -1,0 +1,209 @@
+<div class="grid md:grid-cols-12 gap-6">
+    
+    <div class="col-span-12 md:col-span-2">
+      <div class="bg-white rounded-lg shadow p-4">
+        
+        <div class="flex justify-between items-center mb-4">
+          <h3 class="text-lg font-semibold text-gray-700">Filters</h3>
+          <button type="submit"
+            class="text-blue-600 text-sm hover:underline"
+            (click)="load()"
+          >
+            Clear All
+          </button>
+        </div>
+
+        <hr class="border-t border-gray-300 w-full mb-4" />
+
+        <!-- User Type Filter -->
+        <div class="mb-4">
+          <h6 class="text-gray-500 text-sm">User Type</h6>
+          <label>
+            <input
+              type="radio"
+              name="roleFilter"
+              value="INTERNAL"
+              (change)="onTypeChange('INTERNAL')"
+              [checked]="selectedType === 'INTERNAL'"
+            />
+            Internal Users
+          </label>
+          <br />
+          <label>
+            <input
+              type="radio"
+              name="roleFilter"
+              value="CUSTOMER"
+              (change)="onTypeChange('CUSTOMER')"
+              [checked]="selectedType === 'CUSTOMER'"
+            />
+            Customers
+          </label>
+        </div>
+
+        <hr class="border-t border-gray-300 w-full mb-4" />
+
+        <!-- User Search Filter -->
+        <div class="relative mb-4" #userFilterRoot>
+          <label class="block text-sm font-medium text-gray-700 mb-1">User Details</label>
+          <input
+            type="text"
+            [(ngModel)]="searchUser"
+            (focus)="UserDropdown(true)"
+            class="w-full border rounded-md p-2 focus:outline-none focus:ring-1 focus:ring-blue-500"
+            placeholder="Search Users"
+          />
+          <!-- Selected Names Display -->
+            <div class="flex flex-wrap gap-2 mt-2">
+              <span
+                *ngFor="let name of selectedNames"
+                class="bg-gray-200 text-gray-800 text-sm px-3 py-1 rounded-full flex items-center gap-1"
+              >
+                {{ name }}
+                <button
+                  type="button"
+                  class="text-gray-500 hover:text-red-500 focus:outline-none"
+                  (click)="removeName(name)"
+                >
+                  <i class="bi bi-x-circle"></i>
+                </button>
+              </span>
+            </div>
+
+
+          <!-- Dropdown -->
+          <div
+            *ngIf="userdropdownOpen"
+            class="absolute mt-1 w-full bg-white border rounded shadow z-20 flex flex-col"
+          >
+            <!-- Scrollable list -->
+            <div class="max-h-60 overflow-auto">
+              <div
+                *ngFor="let user of filteredUsers()"
+                class="flex items-center p-2 hover:bg-gray-100"
+              >
+                <input
+                  type="checkbox"
+                  [value]="user.firstName"
+                  [(ngModel)]="user.selected"
+                  [checked]="selectedNames.includes(user.firstName)"
+                  (change)="onUserToggle(user.firstName!, $event)"
+                  class="mr-2"
+                />
+                <span>{{ user.firstName }}</span>
+              </div>
+
+              <div *ngIf="filteredUsers().length === 0" class="p-2 text-gray-500">
+                No users found
+              </div>
+            </div>
+
+            <!-- done button -->
+            <div class="sticky bottom-0 bg-white border-t flex justify-end p-2">
+              <button
+                class="bg-blue-500 text-white px-4 py-1 rounded-md hover:bg-blue-600"
+                (click)="UserDropClose()"
+              >
+                DONE
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <hr class="border-t border-gray-300 w-full mb-4" />
+
+        <!-- Role Search Filter  -->
+        <div class="relative" #roleFilterRoot>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Roles</label>
+          <input
+            type="text"
+            [(ngModel)]="searchRole"
+            (focus)="roleDropDown(true)"
+            class="w-full border rounded-md p-2 focus:outline-none focus:ring-1 focus:ring-blue-500"
+            placeholder="Search Roles"
+          />
+           <!-- Selected Roles Display -->
+            <div class="flex flex-wrap gap-2 mt-2">
+              <span
+                *ngFor="let role of selectedRoles"
+                class="bg-gray-200 text-gray-800 text-sm px-3 py-1 rounded-full flex items-center gap-1"
+              >
+                {{ role }}
+                <button
+                  type="button"
+                  class="text-gray-500 hover:text-red-500 focus:outline-none"
+                  (click)="removeRole(role)"
+                >
+                  <i class="bi bi-x-circle"></i>
+                </button>
+              </span>
+            </div>
+
+
+          <!-- Dropdown -->
+          <div
+            *ngIf="roledropdownOpen"
+            class="absolute mt-1 w-full bg-white border rounded shadow z-20 flex flex-col"
+          >
+            <!-- Scrollable list -->
+            <div class="max-h-60 overflow-auto">
+              <div
+                *ngFor="let user of filterRoles()"
+                class="flex items-center p-2 hover:bg-gray-100"
+              >
+                <input
+                  type="checkbox"
+                  [checked]="selectedRoles.includes(user.role ?? '')"
+                  [(ngModel)]="user.selected"
+                  (change)="onRoleToggle(user.role!, $event)"
+                  class="mr-2"
+                />
+                <span>{{ user.role }}</span>
+              </div>
+
+              <div *ngIf="filterRoles().length === 0" class="p-2 text-gray-500">
+                No roles found
+              </div>
+            </div>
+
+            <!-- done button -->
+            <div class="sticky bottom-0 bg-white border-t flex justify-end p-2">
+              <button
+                class="bg-blue-500 text-white px-4 py-1 rounded-md hover:bg-blue-600"
+                (click)="RoleDropClose()"
+              >
+                DONE
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <hr class="border-t border-gray-300 w-full mt-4" />
+        <!-- User status filter -->
+        <div class="mb-4">
+          <h6 class="text-gray-500 text-sm">Status</h6>
+          <label>
+            <input
+              type="radio"
+              name="statusFilter"
+              value="true"
+              (change)="onStatusChange(true)"
+              [checked]="selectedStatus ===true"
+            />
+            Active
+          </label>
+          <br />
+          <label>
+            <input
+              type="radio"
+              name="statusFilter"
+              value="false"
+              (change)="onStatusChange(false)"
+              [checked]="selectedStatus === false"
+            />
+            InActive
+          </label>
+        </div>
+
+      </div>
+    </div>

@@ -21,13 +21,14 @@ import { UsersModule } from './users/users-module';
     AppRoutingModule,
     UsersModule,
     ReactiveFormsModule,
-    FormsModule
+    FormsModule,
+
   ],
   providers: [
     provideHttpClient(withFetch()),
     provideBrowserGlobalErrorListeners(),
     provideZonelessChangeDetection(),
-    provideClientHydration(withEventReplay())
+    provideClientHydration(withEventReplay()),
   ],
   bootstrap: [App]
 })

@@ -1,0 +1,34 @@
+<div
+  class="modal fade show"
+  [class.d-block]="show"
+  tabindex="-1"
+  aria-labelledby="deleteConfirmLabel"
+  aria-hidden="!show"
+  style="background: rgba(0,0,0,0.4);"
+>
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-body text-center">
+        <p class="text-gray-800 text-lg font-medium">
+          You can't undo this. Delete the user profile anyway?
+        </p>
+        <div class="mt-4 flex justify-center gap-3">
+          <button
+            type="button"
+            class="btn btn-outline-secondary px-4"
+            (click)="cancelDelete()"
+          >
+            Cancel
+          </button>
+          <button
+            type="button"
+            class="btn btn-success px-4"
+            (click)="confirmDelete()"
+          >
+            Yes, Delete
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
